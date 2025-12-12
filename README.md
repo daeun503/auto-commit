@@ -17,3 +17,5 @@ echo 'export OPENAI_API_KEY="API_KEY"' >> ~/.zshrc
 source ~/.zshrc
 echo $OPENAI_API_KEY # API_KEY 잘 들어갔는지 확인
 ```
+
+<img width="632" height="537" alt="image" src="https://github.com/user-attachments/assets/66b01a49-9c28-41ca-ad03-268e78feac0b" />
