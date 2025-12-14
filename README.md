@@ -51,4 +51,4 @@ git add .
 accommit
 ```
 
-<img width="632" height="537" alt="image" src="https://github.com/user-attachments/assets/66b01a49-9c28-41ca-ad03-268e78feac0b" />
+<img width="978" height="570" alt="image" src="https://github.com/user-attachments/assets/30389c4f-ab5b-462a-b4f7-d89efdc6b3f9" />
