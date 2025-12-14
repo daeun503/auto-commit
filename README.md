@@ -78,4 +78,5 @@ echo "alias accommit=\"$(pwd)/main.py --engine copilot --icons nerd\"" >> ~/.zsh
 <img width="1102" height="428" alt="image" src="https://github.com/user-attachments/assets/30433905-a66a-4074-a22d-aca2e5958425" />
 
 만약 아이콘을 추가하고 싶으면 icons/ 폴더에 있는 파일을 참고해서 추가하면 됨
+
 https://www.nerdfonts.com/cheat-sheet
