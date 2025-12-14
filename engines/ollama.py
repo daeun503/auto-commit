@@ -1,7 +1,7 @@
 import json
+from pathlib import Path
 
 import requests
-from pathlib import Path
 
 from .base import CommitMessageEngine
 

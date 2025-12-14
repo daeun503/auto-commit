@@ -1,12 +1,16 @@
-import re
 from dataclasses import dataclass
 from typing import List
 
 from InquirerPy import inquirer
 
-from flows.DiffFiles import DiffFiles
-from git.client import GitClient
 from engines.base import CommitMessageEngine
+from flows.diff_console import DiffConsole
+from flows.diff_processor import DiffProcessor
+from git.client import GitClient
+
+__all__ = [
+    "CommitFlow",
+]
 
 
 @dataclass
@@ -14,116 +18,8 @@ class CommitFlow:
     engine: CommitMessageEngine
     git: GitClient
 
-    # ---------- diff filtering ----------
-    MAX_DIFF_CHARS = 12_000
-    EXCLUDE_FILES = {
-        ".gitignore",
-        "poetry.lock",
-        "Pipfile.lock",
-        "package-lock.json",
-        "yarn.lock",
-    }
-    EXCLUDE_SUFFIXES = {
-        ".lock",
-        ".min.js",
-        ".map",
-    }
-    EXCLUDE_DIRS = {
-        "node_modules/",
-        "dist/",
-        "build/",
-        ".venv/",
-        "__pycache__/",
-    }
-
-    def _filter_diff_files(self, diff: str) -> DiffFiles:
-        """
-        diff를 파일 단위로 분리하여 LLM에 불필요한 변경을 제거
-        """
-        blocks = diff.split("\ndiff --git ")
-        kept: List[str] = []
-
-        included_files = []
-        excluded_files = []
-
-        for i, block in enumerate(blocks):
-            if i == 0:
-                body = block
-            else:
-                body = "diff --git " + block
-
-            file_path = self._extract_file_path(body)
-
-            # file_path가 없으면(파싱 실패) 안전하게 포함 처리(또는 제외 처리 중 택1)
-            if file_path and self._should_exclude_file(file_path):
-                excluded_files.append(file_path)
-            elif file_path:
-                included_files.append(file_path)
-                kept.append(body)
-
-        filtered = "\n".join(kept).strip()
-
-        # 안전장치: 너무 길면 MAX_DIFF_CHARS 만큼 자름
-        if len(filtered) > self.MAX_DIFF_CHARS:
-            filtered = filtered[: self.MAX_DIFF_CHARS] + "\n# ... diff truncated"
-
-        return DiffFiles(
-            included=sorted(set(included_files)),
-            excluded=sorted(set(excluded_files)),
-            filtered_diff=filtered,
-        )
-
-    def _extract_file_path(self, block: str) -> str | None:
-        """
-        diff --git a/foo b/foo 에서 b쪽 경로를 우선 추출
-        """
-        m = re.search(r"^diff --git a/(.+?) b/(.+?)\n", block, re.MULTILINE)
-        if not m:
-            return None
-        return m.group(2)
-
-    def _should_exclude_file(self, file_path: str) -> bool:
-        """
-        파일 경로(또는 파일명) 기준으로 제외 여부 판단
-        """
-        path = file_path.replace("\\", "/")  # 윈도우 경로 방어
-        filename = path.rsplit("/", 1)[-1]
-
-        # 파일명 기준 제외 (어느 폴더에 있든 .gitignore 등)
-        if filename in self.EXCLUDE_FILES:
-            return True
-
-        # suffix 기준 제외
-        for suffix in self.EXCLUDE_SUFFIXES:
-            if path.endswith(suffix):
-                return True
-
-        # 디렉토리 기준 제외
-        for d in self.EXCLUDE_DIRS:
-            # "node_modules/" 처럼 trailing slash가 있다고 가정
-            if path.startswith(d) or f"/{d}" in path:
-                return True
-
-        return False
-
-    def print_diff_files(self, files: DiffFiles) -> None:
-        print()
-        print("📦 커밋 대상 파일 (LLM 전달됨)")
-
-        if not files.included:
-            print("  (없음)")
-        else:
-            for f in files.included:
-                print(f"  📄 {f}")
-
-        if files.excluded:
-            print()
-            print("🚫 제외된 파일")
-            for f in files.excluded:
-                # ANSI dim (회색)
-                print(f"\033[90m  ░░ {f}\033[0m")
-
-        print()
+    diff_processor: DiffProcessor
+    console: DiffConsole
 
     # ---------- UI ----------
     def select_message(self, candidates: List[str]) -> str:
@@ -135,7 +31,6 @@ class CommitFlow:
         ).execute()
 
         initial = "" if answer == "✏️ 직접 입력 (내가 쓰기)" else str(answer).strip()
-
         edited = inquirer.text(
             message="커밋 메시지를 수정/확정하세요:",
             default=initial,
@@ -144,11 +39,7 @@ class CommitFlow:
         return (edited or "").strip()
 
     def confirm_commit(self, message: str) -> bool:
-        print()
-        print("선택된 커밋 메시지:")
-        print(f"  {message}")
-        print()
-
+        self.console.print_selected_message(message)
         return bool(
             inquirer.confirm(
                 message="이 메시지로 커밋할까요?",
@@ -160,8 +51,8 @@ class CommitFlow:
     def run(self, extra_args: List[str]) -> int:
         raw_diff = self.git.get_staged_diff()
 
-        diff_files = self._filter_diff_files(raw_diff)
-        self.print_diff_files(diff_files)
+        diff_files = self.diff_processor.process(raw_diff)
+        self.console.print_diff_files(diff_files)
 
         diff = diff_files.filtered_diff.strip()
         if not diff:

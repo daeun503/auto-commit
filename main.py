@@ -3,12 +3,13 @@
 import sys
 from pathlib import Path
 
-from engines.ollama import OllamaEngine
 from engines.chatgpt import ChatGPTEngine
 from engines.copilot import CopilotEngine
-
-from git.client import GitClient
+from engines.ollama import OllamaEngine
 from flows.commit_flow import CommitFlow
+from flows.diff_console import diff_console
+from flows.diff_processor import diff_processor
+from git.client import GitClient
 
 
 def load_engine():
@@ -32,7 +33,14 @@ def main() -> None:
 
     try:
         git = GitClient()
-        flow = CommitFlow(engine=engine, git=git)
+
+        flow = CommitFlow(
+            engine=engine,
+            git=git,
+            diff_processor=diff_processor,
+            console=diff_console,
+        )
+
         code = flow.run(extra_args)
         sys.exit(code)
     except KeyboardInterrupt:

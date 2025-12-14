@@ -1,12 +1,12 @@
 import os
 
-from openai import OpenAI
 from openai import (
-    AuthenticationError,
     APIConnectionError,
-    RateLimitError,
-    BadRequestError,
     APIStatusError,
+    AuthenticationError,
+    BadRequestError,
+    OpenAI,
+    RateLimitError,
 )
 
 from .base import CommitMessageEngine

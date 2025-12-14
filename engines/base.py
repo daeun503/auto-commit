@@ -1,11 +1,11 @@
+import json
+import sys
+import threading
+import time
 from abc import ABC, abstractmethod
+from contextlib import contextmanager
 from pathlib import Path
 from typing import List
-import json
-import threading
-import sys
-import time
-from contextlib import contextmanager
 
 
 class CommitMessageEngine(ABC):
