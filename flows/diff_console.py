@@ -1,5 +1,8 @@
+from __future__ import annotations
+
+from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict
+from typing import Dict, Optional
 
 import yaml
 
@@ -7,62 +10,136 @@ from flows.dtos import DiffFiles
 
 __all__ = [
     "DiffConsole",
-    "diff_console",
 ]
+
+
+@dataclass(frozen=True)
+class IconEntry:
+    icon: str
+    color: Optional[str] = None
+
+
+@dataclass(frozen=True)
+class IconsConfig:
+    default: IconEntry
+    extensions: Dict[str, IconEntry]
+    filenames: Dict[str, IconEntry]
 
 
 class DiffConsole:
     """
     DiffFiles를 콘솔에 출력하는 클래스
-    - 아이콘 매핑(YAML) 로드
-    - 포함/제외 목록 출력
-    - 선택된 메시지 출력 UX
+
+    - emoji.yaml / nerd.yaml 포맷 모두 지원
+    - 파일 포함/제외 목록 출력
+    - 선택된 커밋 메시지 출력
     """
 
-    ICON_PATH = "config/file_icons.yaml"
+    DEFAULT_ICON_PATH = "icons/emoji.yaml"
 
-    def _load_icons(self) -> Dict[str, Any]:
-        path = Path(self.ICON_PATH)
+    COLORS = {
+        "black": "\033[30m",
+        "red": "\033[31m",
+        "green": "\033[32m",
+        "yellow": "\033[33m",
+        "blue": "\033[34m",
+        "magenta": "\033[35m",
+        "cyan": "\033[36m",
+        "gray": "\033[90m",
+        "reset": "\033[0m",
+    }
+
+    def __init__(self, icons: str | None = None) -> None:
+        self.icon_path = self.DEFAULT_ICON_PATH
+        if icons == "nerd":
+            self.icon_path = "icons/nerd.yaml"
+
+    def _load_icons(self) -> IconsConfig:
+        path = Path(self.icon_path)
+
         if not path.exists():
-            return {"extensions": {}, "filenames": {}, "default": "📄"}
+            return IconsConfig(
+                default=IconEntry("📄"),
+                extensions={},
+                filenames={},
+            )
 
         with path.open("r", encoding="utf-8") as f:
-            data = yaml.safe_load(f) or {}
+            raw = yaml.safe_load(f) or {}
 
-        data.setdefault("extensions", {})
-        data.setdefault("filenames", {})
-        data.setdefault("default", "📄")
-        return data
+        return IconsConfig(
+            default=self._normalize_entry(raw.get("default", "📄")),
+            extensions={
+                k: self._normalize_entry(v)
+                for k, v in raw.get("extensions", {}).items()
+            },
+            filenames={
+                k: self._normalize_entry(v) for k, v in raw.get("filenames", {}).items()
+            },
+        )
 
-    def _get_icon(self, icons: Dict[str, Any], file_path: str) -> str:
+    def _normalize_entry(self, value: dict | str) -> IconEntry:
+        """
+        emoji.yaml (string) / nerd.yaml (dict) 를
+        내부 표준 IconEntry 로 변환
+        """
+        if isinstance(value, dict):
+            return IconEntry(
+                icon=value.get("icon", ""),
+                color=value.get("color"),
+            )
+
+        if isinstance(value, str):
+            return IconEntry(icon=value)
+
+        return IconEntry(icon="")
+
+    def _render_icon(
+        self,
+        icons: IconsConfig,
+        file_path: str,
+    ) -> str:
         filename = file_path.replace("\\", "/").split("/")[-1]
         suffix = Path(file_path).suffix
 
-        return (
-            icons["filenames"].get(filename)
-            or icons["extensions"].get(suffix)
-            or icons["default"]
+        entry = (
+            icons.filenames.get(filename)
+            or icons.extensions.get(suffix)
+            or icons.default
         )
 
+        parts: list[str] = []
+
+        if entry.color:
+            parts.append(self.COLORS.get(entry.color, ""))
+
+        parts.append(entry.icon)
+        parts.append(self.COLORS["reset"])
+
+        return "".join(parts)
+
+    # ---------- public ----------
     def print_diff_files(self, files: DiffFiles) -> None:
         icons = self._load_icons()
+        gray = self.COLORS["gray"]
+        reset = self.COLORS["reset"]
 
         print()
-        print("📦 커밋 대상 파일 (LLM 전달됨)")
+        print("🤖 LLM 입력에 포함됨")
 
         if not files.included:
             print("  (없음)")
         else:
             for f in files.included:
-                icon = self._get_icon(icons, f)
+                icon = self._render_icon(icons, f)
                 print(f"  {icon} {f}")
 
         if files.excluded:
             print()
-            print("🚫 제외된 파일")
+            print("🚫 LLM 입력에서 제외됨")
             for f in files.excluded:
-                icon = self._get_icon(icons, f)
-                print(f"\033[90m  {icon} {f}\033[0m")
+                icon = self._render_icon(icons, f)
+                print(f"  {icon} {gray}{f}{reset}")  # 파일명 dim 처리
 
         print()
 
@@ -71,6 +148,3 @@ class DiffConsole:
         print("선택된 커밋 메시지:")
         print(f"  ✅ {message}")
         print()
-
-
-diff_console = DiffConsole()

@@ -1,5 +1,4 @@
 import json
-from pathlib import Path
 
 import requests
 
@@ -8,30 +7,23 @@ from .base import CommitMessageEngine
 
 class OllamaEngine(CommitMessageEngine):
     name = "Ollama"
-    MODEL_PATH = Path("config/ollama_model.txt")
 
-    @classmethod
-    def _load_model(cls) -> str:
-        if not cls.MODEL_PATH.exists():
-            raise RuntimeError(f"Ollama 모델 설정 파일이 없습니다: {cls.MODEL_PATH}\n")
-
-        model = cls.MODEL_PATH.read_text(encoding="utf-8").strip()
+    def __init__(self, model: str):
         if not model:
             raise RuntimeError(
-                f"Ollama 모델 설정 파일이 비어 있습니다: {cls.MODEL_PATH}\n"
+                "Ollama 엔진을 사용하려면 --ollama-model 옵션이 필요합니다.\n"
+                "예: --engine ollama --ollama-model llama3"
             )
-
-        return model
+        self.model = model
 
     def _generate(self, diff: str) -> str:
         prompt = self.get_prompt(diff)
-        model = self._load_model()
 
         try:
             resp = requests.post(
                 "http://localhost:11434/api/generate",
                 json={
-                    "model": model,
+                    "model": self.model,
                     "prompt": prompt,
                     "stream": False,
                     "num_predict": 128,
@@ -60,7 +52,7 @@ class OllamaEngine(CommitMessageEngine):
             raise RuntimeError(
                 f"Ollama 오류: {data['error']}\n"
                 f"모델이 설치되어 있는지 확인하세요:\n"
-                f"  ollama pull {model}"
+                f"  ollama pull {self.model}"
             )
 
         out = (data.get("response") or "").strip()

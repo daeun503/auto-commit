@@ -1,6 +1,6 @@
 import subprocess
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import List
 
 
 @dataclass(frozen=True)
@@ -33,7 +33,7 @@ class GitClient:
             raise RuntimeError("staged 된 diff 내용을 읽지 못했습니다.")
         return diff
 
-    def commit(self, message: str, extra_args: Optional[List[str]] = None) -> int:
+    def commit(self, message: str, extra_args: List[str] | None = None) -> int:
         if not message.strip():
             raise RuntimeError("빈 커밋 메시지는 사용할 수 없습니다.")
 

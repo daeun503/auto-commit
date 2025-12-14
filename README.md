@@ -1,13 +1,17 @@
 # How to use
 
-## Installation
+## Quick Setup
 
 ```shell
 # clone 한 후 폴더 root 경로에서 실행
-echo "alias accommit=\"$(pwd)/main.py\"" >> ~/.zshrc
+echo "alias accommit=\"$(pwd)/main.py --engine ollama --ollama-model qwen3:8b\"" >> ~/.zshrc
 chmod +x main.py
 
+source ~/.zshrc
 which accommit # main.py 파일 경로 확인
+
+git add .
+accommit
 ```
 
 ## Usage
@@ -19,20 +23,26 @@ accommit
 
 ### engine 1 : Ollama
 
-```
+```shell
 brew install ollama
 ollama pull qwen3:8b
+
+echo "alias accommit=\"$(pwd)/main.py --engine ollama --ollama-model qwen3:8b\"" >> ~/.zshrc
+source ~/.zshrc
 
 git add .
 accommit
 ```
 
-### engine 2 : Copilot (default)
+### engine 2 : Copilot (recommend)
 
 ```shell
 brew install copilot
 copliot # copilot cli 실행
 /login # copilot 로그인 수행 (pro 요금제 필요)
+
+echo "alias accommit=\"$(pwd)/main.py --engine copilot\"" >> ~/.zshrc
+source ~/.zshrc
 
 git add .
 accommit
@@ -43,9 +53,11 @@ accommit
 ```shell
 # openai api key 필요 (과금 필요)
 echo 'export OPENAI_API_KEY="sk-..."' >> ~/.zshrc
-
 source ~/.zshrc
 echo $OPENAI_API_KEY # API_KEY 잘 들어갔는지 확인
+
+echo "alias accommit=\"$(pwd)/main.py --engine chatgpt\"" >> ~/.zshrc
+source ~/.zshrc
 
 git add .
 accommit
@@ -56,5 +68,14 @@ accommit
 
 ---
 
+## Nerd Font
 
+```shell
+# nerd font 설치 후 터미널 폰트를 nerd font 로 변경 (사진 참고)
+brew install --cask font-jetbrains-mono-nerd-font
+echo "alias accommit=\"$(pwd)/main.py --engine copilot --icons nerd\"" >> ~/.zshrc
+```
 <img width="1102" height="428" alt="image" src="https://github.com/user-attachments/assets/30433905-a66a-4074-a22d-aca2e5958425" />
+
+만약 아이콘을 추가하고 싶으면 icons/ 폴더에 있는 파일을 참고해서 추가하면 됨
+https://www.nerdfonts.com/cheat-sheet

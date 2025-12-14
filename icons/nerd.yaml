@@ -1,0 +1,88 @@
+# color
+# - black
+# - red
+# - green
+# - yellow
+# - blue
+# - magenta
+# - cyan
+# - gray
+
+default:
+  icon: "\uf15b"     # nf-fa-file
+  color: "gray"
+
+extensions:
+  .py:
+    icon: "\ue73c"   # nf-dev-python
+    color: "blue"
+
+  .ipynb:
+    icon: "\ue80f"   # nf-dev-jupyter
+    color: "yellow"
+
+  .js:
+    icon: "\ue74e"   # nf-dev-javascript
+    color: "yellow"
+
+  .ts:
+    icon: "\ue628"   # nf-seti-typescript
+    color: "blue"
+
+  .html:
+    icon: "\ue736"   # nf-dev-html5
+    color: "red"
+
+  .css:
+    icon: "\ue749"   # nf-dev-css3
+    color: "blue"
+
+  .json:
+    icon: "\ueb0f"   # nf-cod-json
+    color: "magenta"
+
+  .yaml:
+    icon: "\ue8eb"   # nf-dev-yaml
+    color: "magenta"
+
+  .yml:
+    icon: "\ue8eb"   # nf-dev-yaml
+    color: "magenta"
+
+  .toml:
+    icon: "\ue6b2"    # nf-custom-toml
+    color: "gray"
+
+  .md:
+    icon: "\ue73e"   # nf-dev-markdown
+    color: "gray"
+
+  .txt:
+    icon: "\ue64e"   # nf-seti-text
+    color: "gray"
+
+  .sql:
+    icon: "\uf1c0"   # nf-fa-database
+    color: "blue"
+
+
+filenames:
+  Dockerfile:
+    icon: "\ue7b0"   # nf-dev-docker
+    color: "cyan"
+
+  .gitignore:
+    icon: "\ue709"   # nf-dev-github
+    color: "black"
+
+  .env:
+    icon: "\ue690"   # nf-seti-settings
+    color: "gray"
+
+  poetry.lock:
+    icon: "\ue6b2"    # nf-custom-toml
+    color: "blue"
+
+  package-lock.json:
+    icon: "\ued0d"   # nf-fa-node_js
+    color: "green"

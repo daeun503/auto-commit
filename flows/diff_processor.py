@@ -5,7 +5,7 @@ from flows.dtos import DiffFiles, DiffProcessConfig
 
 __all__ = [
     "DiffProcessor",
-    "diff_processor",
+    "processConfig",
 ]
 
 
@@ -91,5 +91,3 @@ processConfig = DiffProcessConfig(
     exclude_suffixes={".lock", ".min.js", ".map"},
     exclude_dirs={"node_modules/", "dist/", "build/", ".venv/", "__pycache__/"},
 )
-
-diff_processor = DiffProcessor(processConfig)

@@ -406,7 +406,7 @@ poetry.toml
 # ruff
 .ruff_cache/
 
-# LSP config files
+# LSP icons files
 pyrightconfig.json
 
 ### Windows ###
@@ -419,7 +419,7 @@ ehthumbs_vista.db
 # Dump file
 *.stackdump
 
-# Folder config file
+# Folder icons file
 [Dd]esktop.ini
 
 # Recycle Bin used on file shares
