@@ -54,15 +54,12 @@ class CommitFlow:
 
             file_path = self._extract_file_path(body)
 
-            if self._should_exclude_block(body):
-                if file_path:
-                    excluded_files.append(file_path)
-                continue
-            else:
-                if file_path:
-                    included_files.append(file_path)
-
-            kept.append(body)
+            # file_path가 없으면(파싱 실패) 안전하게 포함 처리(또는 제외 처리 중 택1)
+            if file_path and self._should_exclude_file(file_path):
+                excluded_files.append(file_path)
+            elif file_path:
+                included_files.append(file_path)
+                kept.append(body)
 
         filtered = "\n".join(kept).strip()
 
@@ -78,28 +75,33 @@ class CommitFlow:
 
     def _extract_file_path(self, block: str) -> str | None:
         """
-        diff --git a/foo b/foo 에서 foo 추출
+        diff --git a/foo b/foo 에서 b쪽 경로를 우선 추출
         """
-        m = re.search(r"diff --git a/(.*?) b/", block)
-        return m.group(1) if m else None
+        m = re.search(r"^diff --git a/(.+?) b/(.+?)\n", block, re.MULTILINE)
+        if not m:
+            return None
+        return m.group(2)
 
-    def _should_exclude_block(self, block: str) -> bool:
+    def _should_exclude_file(self, file_path: str) -> bool:
         """
-        diff 블록 하나가 제외 대상인지 판단
+        파일 경로(또는 파일명) 기준으로 제외 여부 판단
         """
-        # 파일명 기준 제외
-        for name in self.EXCLUDE_FILES:
-            if f" {name}" in block:
-                return True
+        path = file_path.replace("\\", "/")  # 윈도우 경로 방어
+        filename = path.rsplit("/", 1)[-1]
+
+        # 파일명 기준 제외 (어느 폴더에 있든 .gitignore 등)
+        if filename in self.EXCLUDE_FILES:
+            return True
 
         # suffix 기준 제외
         for suffix in self.EXCLUDE_SUFFIXES:
-            if block.strip().endswith(suffix):
+            if path.endswith(suffix):
                 return True
 
         # 디렉토리 기준 제외
         for d in self.EXCLUDE_DIRS:
-            if f" a/{d}" in block or f" b/{d}" in block:
+            # "node_modules/" 처럼 trailing slash가 있다고 가정
+            if path.startswith(d) or f"/{d}" in path:
                 return True
 
         return False
