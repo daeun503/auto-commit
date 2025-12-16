@@ -7,6 +7,7 @@ from typing import Dict, Optional
 import yaml
 
 from flows.dtos import DiffFiles
+from utils import PROJECT_ROOT
 
 __all__ = [
     "DiffConsole",
@@ -35,7 +36,8 @@ class DiffConsole:
     - 선택된 커밋 메시지 출력
     """
 
-    DEFAULT_ICON_PATH = "icons/emoji.yaml"
+    EMOJI_PATH = PROJECT_ROOT / "icons/emoji.yaml"
+    NERD_PATH = PROJECT_ROOT / "icons/nerd.yaml"
 
     COLORS = {
         "black": "\033[30m",
@@ -50,9 +52,9 @@ class DiffConsole:
     }
 
     def __init__(self, icons: str | None = None) -> None:
-        self.icon_path = self.DEFAULT_ICON_PATH
+        self.icon_path = self.EMOJI_PATH
         if icons == "nerd":
-            self.icon_path = "icons/nerd.yaml"
+            self.icon_path = self.NERD_PATH
 
     def _load_icons(self) -> IconsConfig:
         path = Path(self.icon_path)

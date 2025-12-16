@@ -4,13 +4,14 @@ import threading
 import time
 from abc import ABC, abstractmethod
 from contextlib import contextmanager
-from pathlib import Path
 from typing import List
+
+from utils import PROJECT_ROOT
 
 
 class CommitMessageEngine(ABC):
-    name: str  # 표시용 이름
-    PROMPT_PATH = Path("prompts/commit_message.md")
+    name: str
+    PROMPT_PATH = PROJECT_ROOT / "prompts/commit_message.md"
     MAX_DIFF_CHARS = 12000
 
     # ---------- core ----------
