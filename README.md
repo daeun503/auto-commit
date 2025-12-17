@@ -3,22 +3,11 @@
 ## Quick Setup
 
 ```shell
-# clone 한 후 폴더 root 경로에서 실행
-echo "alias accommit=\"$(pwd)/main.py --engine ollama --ollama-model qwen3:8b\"" >> ~/.zshrc
+git clone https://github.com/daeun503/auto-commit.git
+cd auto-commit
+
+pip install -r requirements.txt
 chmod +x main.py
-
-source ~/.zshrc
-which accommit # main.py 파일 경로 확인
-
-git add .
-accommit
-```
-
-## Usage
-
-```shell
-git add .
-accommit
 ```
 
 ### engine 1 : Ollama
@@ -37,8 +26,8 @@ accommit
 ### engine 2 : Copilot (recommend)
 
 ```shell
-brew install copilot
-copliot # copilot cli 실행
+brew install --cask copilot-cli
+copilot # copilot cli 실행
 /login # copilot 로그인 수행 (pro 요금제 필요)
 
 echo "alias accommit=\"$(pwd)/main.py --engine copilot\"" >> ~/.zshrc
