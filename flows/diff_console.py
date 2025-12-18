@@ -148,5 +148,5 @@ class DiffConsole:
     def print_selected_message(self, message: str) -> None:
         print()
         print("선택된 커밋 메시지:")
-        print(f"  ✅ {message}")
+        print(f"  {message}")
         print()

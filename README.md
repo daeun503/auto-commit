@@ -70,3 +70,10 @@ echo "alias accommit=\"$(pwd)/main.py --engine copilot --icons nerd\"" >> ~/.zsh
 만약 아이콘을 추가하고 싶으면 icons/ 폴더에 있는 파일을 참고해서 추가하면 됨
 
 https://www.nerdfonts.com/cheat-sheet
+
+## Extra Option
+
+```
+--icons ["emoji", "nerd"] # 아이콘 스타일 선택
+--branch-prefix store_true # 브랜치 이름에 커밋 메시지 추가
+```

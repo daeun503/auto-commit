@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from pathlib import Path
 from typing import List
 
 from InquirerPy import inquirer
@@ -48,7 +49,7 @@ class CommitFlow:
         )
 
     # ---------- public flow ----------
-    def run(self, extra_args: List[str]) -> int:
+    def run(self, use_branch_prefix: bool, extra_args: List[str]) -> int:
         raw_diff = self.git.get_staged_diff()
 
         diff_files = self.diff_processor.process(raw_diff)
@@ -61,7 +62,12 @@ class CommitFlow:
             )
 
         suggestions = self.engine.generate(diff)
-        chosen = self.select_message(suggestions)
+
+        if use_branch_prefix:
+            branch = self.git.get_current_branch(Path.cwd())
+            chosen = self.select_message([f"[{branch}] {s}" for s in suggestions])
+        else:
+            chosen = self.select_message(suggestions)
 
         if not chosen:
             print("  ❌ 커밋이 취소되었습니다.")

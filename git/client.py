@@ -1,5 +1,6 @@
 import subprocess
 from dataclasses import dataclass
+from pathlib import Path
 from typing import List
 
 
@@ -32,6 +33,25 @@ class GitClient:
         if not diff:
             raise RuntimeError("staged 된 diff 내용을 읽지 못했습니다.")
         return diff
+
+    def get_current_branch(self, pwd: Path) -> str:
+        result = subprocess.run(
+            ["git", "-C", str(pwd), "rev-parse", "--abbrev-ref", "HEAD"],
+            capture_output=True,
+            text=True,
+        )
+        if result.returncode != 0:
+            raise RuntimeError(
+                f"현재 브랜치 이름을 가져오지 못했습니다:\n{result.stderr}"
+            )
+
+        branch = result.stdout
+        if not branch:
+            raise RuntimeError("현재 브랜치 이름이 비어 있습니다.")
+        if branch == "HEAD":
+            raise RuntimeError("detached HEAD 상태입니다.")
+
+        return branch.strip()
 
     def commit(self, message: str, extra_args: List[str] | None = None) -> int:
         if not message.strip():

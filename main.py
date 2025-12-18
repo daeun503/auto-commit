@@ -37,6 +37,16 @@ def parse_args(argv: list[str]):
         ),
     )
 
+    p.add_argument(
+        "--branch-prefix",
+        action="store_true",
+        default=False,
+        help=(
+            "If enabled, prepend the current branch name to the commit message. "
+            "For example, when the branch is 'PROD-123', the commit message will start with '[PROD-123]'"
+        ),
+    )
+
     args, extra_args = p.parse_known_args(argv)
     return args, extra_args
 
@@ -74,7 +84,10 @@ def main() -> None:
             console=diff_console,
         )
 
-        code = flow.run(extra_args)
+        code = flow.run(
+            use_branch_prefix=args.branch_prefix,
+            extra_args=extra_args,
+        )
         sys.exit(code)
     except KeyboardInterrupt:
         print("  ❌ 커밋이 취소되었습니다.")
