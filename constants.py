@@ -5,8 +5,9 @@ PROJECT_ROOT = Path(__file__).resolve().parent
 
 class Constants:
     class Paths:
-        EMOJI_PATH = PROJECT_ROOT / "icons/emoji.yaml"
-        NERD_PATH = PROJECT_ROOT / "icons/nerd.yaml"
+        EMOJI_PATH = PROJECT_ROOT / "icons/console/emoji.yaml"
+        NERD_PATH = PROJECT_ROOT / "icons/console/nerd.yaml"
+        GITMOJI_PATH = PROJECT_ROOT / "icons/gitmoji.yaml"
         PROMPT_PATH = PROJECT_ROOT / "prompts/commit_message.md"
 
     MAX_DIFF_CHARS = 12000
