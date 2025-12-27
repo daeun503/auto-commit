@@ -3,13 +3,9 @@
 import argparse
 import sys
 
-from engines.chatgpt import ChatGPTEngine
-from engines.copilot import CopilotEngine
-from engines.ollama import OllamaEngine
-from flows.commit_flow import CommitFlow
-from flows.diff_console import DiffConsole
-from flows.diff_processor import DiffProcessor
-from git.client import GitClient
+from engines import ChatGPTEngine, CopilotEngine, OllamaEngine
+from flows import CommitFlow, DiffConsole, DiffProcessor
+from git import GitClient
 
 
 def parse_args(argv: list[str]):
