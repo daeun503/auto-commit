@@ -1,11 +1,11 @@
 import re
 from typing import List
 
+from constants import Constants
 from flows.dtos import DiffFiles, DiffProcessConfig
 
 __all__ = [
     "DiffProcessor",
-    "processConfig",
 ]
 
 
@@ -18,8 +18,13 @@ class DiffProcessor:
     4. included / excluded 파일 목록 생성
     """
 
-    def __init__(self, config: DiffProcessConfig):
-        self.config = config
+    def __init__(self):
+        self.config = DiffProcessConfig(
+            max_diff_chars=Constants.MAX_DIFF_CHARS,
+            exclude_files=Constants.ExcludeRules.FILES,
+            exclude_suffixes=Constants.ExcludeRules.SUFFIXES,
+            exclude_dirs=Constants.ExcludeRules.DIRS,
+        )
 
     def process(self, diff: str) -> DiffFiles:
         blocks = diff.split("\ndiff --git ")
@@ -77,17 +82,3 @@ class DiffProcessor:
                 return True
 
         return False
-
-
-processConfig = DiffProcessConfig(
-    max_diff_chars=12_000,
-    exclude_files={
-        ".gitignore",
-        "poetry.lock",
-        "Pipfile.lock",
-        "package-lock.json",
-        "yarn.lock",
-    },
-    exclude_suffixes={".lock", ".min.js", ".map"},
-    exclude_dirs={"node_modules/", "dist/", "build/", ".venv/", "__pycache__/"},
-)

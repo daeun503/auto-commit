@@ -8,7 +8,7 @@ from engines.copilot import CopilotEngine
 from engines.ollama import OllamaEngine
 from flows.commit_flow import CommitFlow
 from flows.diff_console import DiffConsole
-from flows.diff_processor import DiffProcessor, processConfig
+from flows.diff_processor import DiffProcessor
 from git.client import GitClient
 
 
@@ -75,7 +75,7 @@ def main() -> None:
         git = GitClient()
 
         diff_console = DiffConsole(icons=args.icons)
-        diff_processor = DiffProcessor(config=processConfig)
+        diff_processor = DiffProcessor()
 
         flow = CommitFlow(
             engine=engine,
@@ -84,11 +84,11 @@ def main() -> None:
             console=diff_console,
         )
 
-        code = flow.run(
+        commit = flow.run(
             use_branch_prefix=args.branch_prefix,
             extra_args=extra_args,
         )
-        sys.exit(code)
+        sys.exit(commit)
     except KeyboardInterrupt:
         print("  ❌ 커밋이 취소되었습니다.")
         sys.exit(0)

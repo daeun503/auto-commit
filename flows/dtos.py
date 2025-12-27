@@ -9,10 +9,10 @@ __all__ = [
 
 @dataclass(frozen=True)
 class DiffProcessConfig:
-    max_diff_chars: int = 12_000
-    exclude_files: Set[str] = field(default_factory=set)
-    exclude_suffixes: Set[str] = field(default_factory=set)
-    exclude_dirs: Set[str] = field(default_factory=set)
+    max_diff_chars: int
+    exclude_files: Set[str]
+    exclude_suffixes: Set[str]
+    exclude_dirs: Set[str]
 
 
 @dataclass

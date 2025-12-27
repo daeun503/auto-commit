@@ -6,8 +6,8 @@ from typing import Dict, Optional
 
 import yaml
 
+from constants import Constants
 from flows.dtos import DiffFiles
-from utils import PROJECT_ROOT
 
 __all__ = [
     "DiffConsole",
@@ -36,20 +36,9 @@ class DiffConsole:
     - 선택된 커밋 메시지 출력
     """
 
-    EMOJI_PATH = PROJECT_ROOT / "icons/emoji.yaml"
-    NERD_PATH = PROJECT_ROOT / "icons/nerd.yaml"
-
-    COLORS = {
-        "black": "\033[30m",
-        "red": "\033[31m",
-        "green": "\033[32m",
-        "yellow": "\033[33m",
-        "blue": "\033[34m",
-        "magenta": "\033[35m",
-        "cyan": "\033[36m",
-        "gray": "\033[90m",
-        "reset": "\033[0m",
-    }
+    EMOJI_PATH = Constants.Paths.EMOJI_PATH
+    NERD_PATH = Constants.Paths.NERD_PATH
+    COLORS = Constants.COLORS
 
     def __init__(self, icons: str | None = None) -> None:
         self.icon_path = self.EMOJI_PATH

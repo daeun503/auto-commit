@@ -6,13 +6,13 @@ from abc import ABC, abstractmethod
 from contextlib import contextmanager
 from typing import List
 
-from utils import PROJECT_ROOT
+from constants import Constants
 
 
 class CommitMessageEngine(ABC):
     name: str
-    PROMPT_PATH = PROJECT_ROOT / "prompts/commit_message.md"
-    MAX_DIFF_CHARS = 12000
+    PROMPT_PATH = Constants.Paths.PROMPT_PATH
+    MAX_DIFF_CHARS = Constants.MAX_DIFF_CHARS
 
     # ---------- core ----------
     @abstractmethod
