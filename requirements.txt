@@ -2,3 +2,4 @@ requests>=2.31.0
 InquirerPy>=0.3.4
 openai>=1.30.0
 pyyaml
+rich>=14.2.0

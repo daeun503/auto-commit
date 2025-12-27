@@ -5,6 +5,10 @@ from pathlib import Path
 from typing import Dict, Optional
 
 import yaml
+from rich import box
+from rich.console import Console
+from rich.panel import Panel
+from rich.text import Text
 
 from constants import Constants
 from flows.dtos import DiffFiles
@@ -33,7 +37,7 @@ class DiffConsole:
 
     - emoji.yaml / nerd.yaml 포맷 모두 지원
     - 파일 포함/제외 목록 출력
-    - 선택된 커밋 메시지 출력
+    - 최종 커밋 메시지 출력
     """
 
     EMOJI_PATH = Constants.Paths.EMOJI_PATH
@@ -135,7 +139,17 @@ class DiffConsole:
         print()
 
     def print_selected_message(self, message: str) -> None:
-        print()
-        print("선택된 커밋 메시지:")
-        print(f"  {message}")
-        print()
+        console = Console()
+
+        panel = Panel.fit(
+            Text(message, style="bold white"),
+            title="🚀 최종 커밋 메시지",
+            title_align="left",
+            border_style="green",
+            padding=(1, 2),
+            box=box.ROUNDED,
+        )
+
+        console.print()
+        console.print(panel)
+        console.print()
