@@ -8,7 +8,7 @@ from flows import CommitFlow, DiffConsole, DiffProcessor
 from git import GitClient
 
 
-def parse_args(argv: list[str]):
+def make_base_parser():
     """
     required arguments:
         --engine     LLM engine to generate commit messages.
@@ -24,7 +24,6 @@ def parse_args(argv: list[str]):
     # ---------- required ----------
     p.add_argument(
         "--engine",
-        choices=["ollama", "chatgpt", "copilot"],
         required=True,
         help="LLM engine to generate commit messages.",
     )
@@ -63,8 +62,7 @@ def parse_args(argv: list[str]):
         help="Disable interactive editing of gitmoji and prefix.",
     )
 
-    args, extra_args = p.parse_known_args(argv)
-    return args, extra_args
+    return p
 
 
 def load_engine(args):
@@ -82,11 +80,7 @@ def load_engine(args):
     raise RuntimeError(f"알 수 없는 engine: {engine_name}")
 
 
-def main() -> None:
-    args, extra_args = parse_args(sys.argv[1:])
-    engine = load_engine(args)
-    print(f"🔧 사용 중인 엔진: {engine.name} & 모델: {engine.model}")
-
+def main(engine, args, extra_args) -> None:
     try:
         git = GitClient()
 
@@ -117,4 +111,10 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    p = make_base_parser()
+    args, extra_args = p.parse_known_args(sys.argv[1:])
+
+    engine = load_engine(args)
+    print(f"🔧 사용 중인 엔진: {engine.name} & 모델: {engine.model}")
+
+    main(engine, args, extra_args)
