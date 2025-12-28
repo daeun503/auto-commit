@@ -12,10 +12,11 @@ def parse_args(argv: list[str]):
     """
     required arguments:
         --engine     LLM engine to generate commit messages.
-        --model      model name to use with the selected engine.
+        --model      name to use with the selected engine.
     optional arguments:
         --icons          Icon theme for file list output. (default: emoji)
         --branch-prefix  If enabled, prepend the current branch name to the commit message.
+        --edit-gitmoji-prefix  If enabled, allows editing of the gitmoji and prefix of the generated commit message.
     """
 
     p = argparse.ArgumentParser()
@@ -56,12 +57,10 @@ def parse_args(argv: list[str]):
     )
 
     p.add_argument(
-        "--edit-gitmoji-prefix",
+        "--no-edit-gitmoji-prefix",
         action="store_true",
-        default=True,
-        help=(
-            "If enabled, allows editing of the gitmoji and prefix of the generated commit message."
-        ),
+        default=False,
+        help="Disable interactive editing of gitmoji and prefix.",
     )
 
     args, extra_args = p.parse_known_args(argv)
@@ -103,7 +102,7 @@ def main() -> None:
 
         commit = flow.run(
             use_branch_prefix=args.branch_prefix,
-            edit_gitmoji_prefix=args.edit_gitmoji_prefix,
+            edit_gitmoji_prefix=not args.no_edit_gitmoji_prefix,
             extra_args=extra_args,
         )
         sys.exit(commit)

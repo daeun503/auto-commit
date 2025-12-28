@@ -76,4 +76,5 @@ https://www.nerdfonts.com/cheat-sheet
 ```
 --icons ["emoji", "nerd"] # 아이콘 스타일 선택
 --branch-prefix store_true # 브랜치 이름에 커밋 메시지 추가
+--no-edit-gitmoji-prefix store_false # gitmoji + prefix 수정 인터렉티브 제거
 ```
