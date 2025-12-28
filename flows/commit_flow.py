@@ -103,7 +103,12 @@ class CommitFlow:
         )
 
     # ---------- public flow ----------
-    def run(self, use_branch_prefix: bool, extra_args: List[str]) -> int:
+    def run(
+        self,
+        use_branch_prefix: bool,
+        edit_gitmoji_prefix: bool,
+        extra_args: List[str],
+    ) -> int:
         raw_diff = self.git.get_staged_diff()
 
         diff_files = self.diff_processor.process(raw_diff)
@@ -123,7 +128,11 @@ class CommitFlow:
         else:
             chosen = self.select_message(suggestions)
 
-        edited = self.edit_gitmoji_prefix(chosen)
+        if edit_gitmoji_prefix:
+            edited = self.edit_gitmoji_prefix(chosen)
+        else:
+            edited = chosen
+
         if not edited:
             print("  ❌ 커밋이 취소되었습니다.")
             return 0

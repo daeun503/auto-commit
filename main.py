@@ -9,15 +9,18 @@ from git import GitClient
 
 
 def parse_args(argv: list[str]):
+    """
+    required arguments:
+        --engine     LLM engine to generate commit messages.
+        --model      model name to use with the selected engine.
+    optional arguments:
+        --icons          Icon theme for file list output. (default: emoji)
+        --branch-prefix  If enabled, prepend the current branch name to the commit message.
+    """
+
     p = argparse.ArgumentParser()
 
-    p.add_argument(
-        "--icons",
-        default="emoji",
-        choices=["emoji", "nerd"],
-        help="Icon theme for file list output.",
-    )
-
+    # ---------- required ----------
     p.add_argument(
         "--engine",
         choices=["ollama", "chatgpt", "copilot"],
@@ -34,13 +37,30 @@ def parse_args(argv: list[str]):
         ),
     )
 
+    # ---------- optional ----------
+    p.add_argument(
+        "--icons",
+        default="emoji",
+        choices=["emoji", "nerd"],
+        help="Icon theme for file list output.",
+    )
+
     p.add_argument(
         "--branch-prefix",
         action="store_true",
         default=False,
         help=(
-            "If enabled, prepend the current branch name to the commit message. "
+            "If enabled, prepend the current branch name to the commit message.\n"
             "For example, when the branch is 'PROD-123', the commit message will start with '[PROD-123]'"
+        ),
+    )
+
+    p.add_argument(
+        "--edit-gitmoji-prefix",
+        action="store_true",
+        default=True,
+        help=(
+            "If enabled, allows editing of the gitmoji and prefix of the generated commit message."
         ),
     )
 
@@ -83,6 +103,7 @@ def main() -> None:
 
         commit = flow.run(
             use_branch_prefix=args.branch_prefix,
+            edit_gitmoji_prefix=args.edit_gitmoji_prefix,
             extra_args=extra_args,
         )
         sys.exit(commit)
