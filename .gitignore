@@ -436,3 +436,6 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.toptal.com/developers/gitignore/api/macos,django,python,pycharm,windows
+
+# user-local overrides
+prompts/commit_message.local.md

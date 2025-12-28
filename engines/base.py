@@ -11,7 +11,7 @@ from constants import Constants
 
 class CommitMessageEngine(ABC):
     name: str
-    PROMPT_PATH = Constants.Paths.PROMPT_PATH
+    PROMPT_PATH = Constants.Paths.get_prompt_path()
     MAX_DIFF_CHARS = Constants.MAX_DIFF_CHARS
 
     # ---------- core ----------

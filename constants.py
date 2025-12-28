@@ -8,7 +8,16 @@ class Constants:
         EMOJI_PATH = PROJECT_ROOT / "icons/console/emoji.yaml"
         NERD_PATH = PROJECT_ROOT / "icons/console/nerd.yaml"
         GITMOJI_PATH = PROJECT_ROOT / "icons/gitmoji.yaml"
-        PROMPT_PATH = PROJECT_ROOT / "prompts/commit_message.md"
+
+        PROMPT_DEFAULT_PATH = PROJECT_ROOT / "prompts/commit_message.md"
+        PROMPT_LOCAL_PATH = PROJECT_ROOT / "prompts/commit_message.local.md"
+
+        @classmethod
+        def get_prompt_path(cls) -> Path:
+            local_path = cls.PROMPT_LOCAL_PATH
+            if local_path.exists():
+                return local_path
+            return cls.PROMPT_DEFAULT_PATH
 
     MAX_DIFF_CHARS = 12000
     COLORS = {
