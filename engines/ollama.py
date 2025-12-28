@@ -11,8 +11,8 @@ class OllamaEngine(CommitMessageEngine):
     def __init__(self, model: str):
         if not model:
             raise RuntimeError(
-                "Ollama 엔진을 사용하려면 --ollama-model 옵션이 필요합니다.\n"
-                "예: --engine ollama --ollama-model llama3"
+                "Ollama 엔진을 사용하려면 --model 옵션이 필요합니다.\n"
+                "예: --engine ollama --model llama3"
             )
         self.model = model
 

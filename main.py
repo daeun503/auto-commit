@@ -21,15 +21,16 @@ def parse_args(argv: list[str]):
     p.add_argument(
         "--engine",
         choices=["ollama", "chatgpt", "copilot"],
-        default="copilot",
+        required=True,
         help="LLM engine to generate commit messages.",
     )
 
     p.add_argument(
-        "--ollama-model",
+        "--model",
+        required=True,
         help=(
-            "Ollama model name to use when --engine is 'ollama'. "
-            "Examples: llama3, mistral, qwen3:8b"
+            "model name to use with the selected engine.\n"
+            "Examples: llama3, mistral, qwen3:8b, gpt-4.1, gpt-4.1-mini, claude-sonnet-4.5. etc."
         ),
     )
 
@@ -51,13 +52,13 @@ def load_engine(args):
     engine_name = args.engine
 
     if engine_name == "ollama":
-        return OllamaEngine(model=args.ollama_model)
+        return OllamaEngine(model=args.model)
 
     if engine_name == "chatgpt":
-        return ChatGPTEngine()
+        return ChatGPTEngine(model=args.model)
 
     if engine_name == "copilot":
-        return CopilotEngine()
+        return CopilotEngine(model=args.model)
 
     raise RuntimeError(f"알 수 없는 engine: {engine_name}")
 
@@ -65,7 +66,7 @@ def load_engine(args):
 def main() -> None:
     args, extra_args = parse_args(sys.argv[1:])
     engine = load_engine(args)
-    print(f"🔧 사용 중인 엔진: {engine.name}")
+    print(f"🔧 사용 중인 엔진: {engine.name} & 모델: {engine.model}")
 
     try:
         git = GitClient()

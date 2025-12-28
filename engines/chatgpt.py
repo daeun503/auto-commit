@@ -15,7 +15,7 @@ from .base import CommitMessageEngine
 class ChatGPTEngine(CommitMessageEngine):
     name = "ChatGPT"
 
-    def __init__(self) -> None:
+    def __init__(self, model: str) -> None:
         if not os.environ.get("OPENAI_API_KEY"):
             raise RuntimeError(
                 "OPENAI_API_KEY가 설정되어 있지 않습니다.\n"
@@ -23,12 +23,19 @@ class ChatGPTEngine(CommitMessageEngine):
             )
         self.client = OpenAI()
 
+        if not model:
+            raise RuntimeError(
+                "ChatGPT 엔진을 사용하려면 --model 옵션이 필요합니다.\n"
+                "예: --engine chatgpt --model gpt-4.1-mini"
+            )
+        self.model = model
+
     def _generate(self, diff: str) -> str:
         prompt = self.get_prompt(diff)
 
         try:
             resp = self.client.chat.completions.create(
-                model="gpt-4.1-mini",
+                model=self.model,
                 messages=[
                     {"role": "system", "content": "You generate git commit messages."},
                     {"role": "user", "content": prompt},

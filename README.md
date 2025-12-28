@@ -16,7 +16,7 @@ chmod +x main.py
 brew install ollama
 ollama pull qwen3:8b
 
-echo "alias accommit=\"$(pwd)/main.py --engine ollama --ollama-model qwen3:8b\"" >> ~/.zshrc
+echo "alias accommit=\"$(pwd)/main.py --engine ollama --model qwen3:8b\"" >> ~/.zshrc
 source ~/.zshrc
 
 git add .
@@ -30,7 +30,7 @@ brew install --cask copilot-cli
 copilot # copilot cli 실행
 /login # copilot 로그인 수행 (pro 요금제 필요)
 
-echo "alias accommit=\"$(pwd)/main.py --engine copilot\"" >> ~/.zshrc
+echo "alias accommit=\"$(pwd)/main.py --engine copilot --model gpt-4.1\"" >> ~/.zshrc
 source ~/.zshrc
 
 git add .
@@ -45,7 +45,7 @@ echo 'export OPENAI_API_KEY="sk-..."' >> ~/.zshrc
 source ~/.zshrc
 echo $OPENAI_API_KEY # API_KEY 잘 들어갔는지 확인
 
-echo "alias accommit=\"$(pwd)/main.py --engine chatgpt\"" >> ~/.zshrc
+echo "alias accommit=\"$(pwd)/main.py --engine chatgpt --model gpt-4.1-mini\"" >> ~/.zshrc
 source ~/.zshrc
 
 git add .
@@ -67,7 +67,7 @@ echo "alias accommit=\"$(pwd)/main.py --engine copilot --icons nerd\"" >> ~/.zsh
 <img width="1102" height="428" alt="image" src="https://github.com/user-attachments/assets/30433905-a66a-4074-a22d-aca2e5958425" />
 <img width="661" height="386" alt="image" src="https://github.com/user-attachments/assets/90933e00-489b-48b5-bc29-0d0bdb712b2f" />
 
-만약 아이콘을 추가하고 싶으면 icons/ 폴더에 있는 파일을 참고해서 추가하면 됨
+만약 아이콘을 추가하고 싶으면 icons/ 폴더에 있는 파일을 참고해서 추가
 
 https://www.nerdfonts.com/cheat-sheet
 

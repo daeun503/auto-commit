@@ -7,6 +7,14 @@ from .base import CommitMessageEngine
 class CopilotEngine(CommitMessageEngine):
     name = "Copilot"
 
+    def __init__(self, model: str) -> None:
+        if not model:
+            raise RuntimeError(
+                "Copilot 엔진을 사용하려면 --model 옵션이 필요합니다.\n"
+                "예: --engine copilot --model gpt-4.1"
+            )
+        self.model = model
+
     @staticmethod
     def _ensure_copilot_available() -> None:
         if shutil.which("copilot") is None:
@@ -20,7 +28,7 @@ class CopilotEngine(CommitMessageEngine):
         prompt = self.get_prompt(diff)
         try:
             result = subprocess.run(
-                ["copilot", "-p", prompt],
+                ["copilot", "-p", prompt, "--model", self.model],
                 capture_output=True,
                 text=True,
             )
